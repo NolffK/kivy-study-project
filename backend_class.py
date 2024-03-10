@@ -10,7 +10,10 @@ class Backend:
     csv_data = 0
     csv_reader = 0
 
-    def __init__(self, message, intro_message, future_study_schedule_message, todays_study_schedule, future_study_schedule, csv_data, csv_reader):
+    todays_study_schedule_string = ''
+    future_study_schedule_string = ''
+
+    def __init__(self, message, intro_message, future_study_schedule_message, todays_study_schedule, future_study_schedule, csv_data, csv_reader, todays_study_schedule_string, future_study_schedule_string):
         self.message = message
         self.intro_message = intro_message
         self.future_study_schedule_message = future_study_schedule_message
@@ -18,6 +21,8 @@ class Backend:
         self.future_study_schedule = future_study_schedule
         self.csv_data = csv_data
         self.csv_reader = csv_reader
+        self.todays_study_schedule_string = todays_study_schedule_string
+        self.future_study_schedule_string = future_study_schedule_string
 
     def update_next_study_day(next_study_day, days_remaining):
            
@@ -47,7 +52,7 @@ class Backend:
         days_remaining -= 1
         return str(days_remaining)
     
-    def remove_row(data, remaining_study_days, index_):
+    def remove_row(data, index_):
         
         data.pop(index_)
         return data
@@ -67,13 +72,21 @@ class Backend:
                 row['remaining_study_days'] = self.update_remaining_study_days(row['remaining_study_days'])
                 self.todays_study_schedule.append(f"Study {row['topic']} today! {row['remaining_study_days']} day(s) remaining for this topic")
 
+                self.todays_study_schedule_string = ''.join([self.todays_study_schedule_string, f"Study {row['topic']} today! {row['remaining_study_days']} day(s) remaining for this topic\n\n"])
+
                 if row['remaining_study_days'] > '0':
                     self.future_study_schedule.append(f"Study {row['topic']} on {row['next_study_day']}! {row['remaining_study_days']} day(s) remaining for this topic")
+
+                    self.future_study_schedule_string = ''.join([self.future_study_schedule_string, f"Study {row['topic']} on {row['next_study_day']}! {row['remaining_study_days']} day(s) remaining for this topic\n\n"])
                 else:
                     self.csv_data = self.remove_row(self.csv_data, row['remaining_study_days'], index)
 
             else:
                 self.future_study_schedule.append(f"Study {row['topic']} on {row['next_study_day']}! {row['remaining_study_days']} day(s) remaining for this topic")
+                self.future_study_schedule_string = ''.join([self.future_study_schedule_string, f"Study {row['topic']} on {row['next_study_day']}! {row['remaining_study_days']} day(s) remaining for this topic\n\n"])
+            
+            if self.todays_study_schedule_string == '':
+                self.todays_study_schedule_string = 'NOTHING!!!'
 
             index += 1
     
@@ -88,18 +101,16 @@ class Backend:
     def send_email(self):
 
         email_message = f"""
-     
-        Hello! This is your study schedule for today:
+Hello! This is your study schedule for today:
 
-        Today, you are going to study...
+Today, you are going to study...
 
-        {self.todays_study_schedule}
+{self.todays_study_schedule_string}
 
-        That's it for today...upcoming study schedule:
+Upcoming study schedule:
 
-        {self.future_study_schedule}
-
-        """
+{self.future_study_schedule_string}
+ """
 
         #establish connection to GMAIL SMTP server, 'with' keyword ensures that the connection is closed after code is executed
         #Uses SMTP class to creat an SMTP connection specified over smtp.gmail.com
