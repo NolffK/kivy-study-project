@@ -110,7 +110,7 @@ Today, you are going to study...
 Upcoming study schedule:
 
 {self.future_study_schedule_string}
- """
+"""
 
         #establish connection to GMAIL SMTP server, 'with' keyword ensures that the connection is closed after code is executed
         #Uses SMTP class to creat an SMTP connection specified over smtp.gmail.com

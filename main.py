@@ -1,7 +1,8 @@
-#TODO: Find a way to format strings so each topic is on new line
+#TODO: DONE! 
 #TODO: Find a way to have a user delete a row from the data.csv file
 #TODO: Find a way to have a user ADD a row to the data.csv file
 #TODO: Implement Kivy GUI
+#TODO: Find out how to format email into html code??
 
 from backend_class import Backend
 
