@@ -1,0 +1,6 @@
+topic,next_study_day,remaining_study_days
+Philosophy,2024-03-10,4
+Math,2024-03-10,3
+Science,2024-03-11,2
+History,2024-03-12,1
+Programming,2024-03-13,4

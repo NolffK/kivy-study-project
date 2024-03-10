@@ -1,0 +1,100 @@
+import csv
+import datetime
+
+#TODO format email
+#TODO implement Tkinter
+
+# import smtplib
+
+# def send_email(email_message):
+#     #establish connection to GMAIL SMTP server, 'with' keyword ensures that the connection is closed after code is executed
+#     #Uses SMTP class to creat an SMTP connection specified over smtp.gmail.com
+#     with smtplib.SMTP("smtp.gmail.com", port=587) as connection: 
+#         #Starts the Transport Layer Security encryption for the connection.
+#         #TLS is a protocol that ensures the security of communication over a computer network
+#         connection.starttls()
+#         connection.login(user='peytonvecchi@gmail.com', password='maagkymawsgitjmf')
+#         connection.sendmail(from_addr='peytonvecchi@gmail.com', to_addrs='peytonvecchi@gmail.com',
+#         msg=email_message)
+
+#4 days remaining equals + datetime.timedelta(days=1)
+#3 days remaining equals + datetime.timedelta(days=3)
+#2 days remaining equals + datetime.timedelta(days=5)
+#1 days remaining equals + datetime.timedelta(days=7)
+
+def update_next_study_day(next_study_day, days_remaining):
+           
+    date_object = datetime.datetime.strptime(next_study_day, '%Y-%m-%d')
+
+    if days_remaining == '4':    
+        date_object = date_object + datetime.timedelta(days=1)
+
+    elif days_remaining == '3':
+        date_object = date_object + datetime.timedelta(days=3)
+
+    elif days_remaining == '2':
+        date_object = date_object + datetime.timedelta(days=5)
+
+    elif days_remaining == '1':
+        date_object = date_object + datetime.timedelta(days=7)
+    
+    else:
+        date_object = date_object + datetime.timedelta(days=14)
+
+    date_object = date_object.strftime('%Y-%m-%d')
+    return str(date_object)
+
+def update_remaining_study_days(days_remaining):
+
+    days_remaining = int(days_remaining)
+    days_remaining -= 1
+    return str(days_remaining)
+
+def remove_row_if_remaining_study_days_is_less_than_zero(csv_data_, remaining_study_days, index_):
+
+    if remaining_study_days == '0':
+        csv_data_.pop(index_)
+
+    return csv_data_       
+
+message = 'time to study'
+intro_message = "\nHello! Here is your spaced repitition study schedule for today: \n"
+future_study_schedule_message = "\nFuture study schedule: \n"
+todays_study_schedule = []
+future_study_schedule = []
+csv_data = 0
+today = str(datetime.date.today())
+
+with open('data.csv', 'r') as csv_file:
+    csv_reader = csv.DictReader(csv_file)
+    csv_writer = csv.DictWriter(csv_file, fieldnames=csv_reader.fieldnames)
+    csv_data = [row for row in csv_reader] # creates list (csv_data) of dicts (row)
+
+index = 0
+for row in csv_data:
+    if today == row["next_study_day"]:
+            
+        row['next_study_day'] = update_next_study_day(row['next_study_day'], row['remaining_study_days'])
+        row['remaining_study_days'] = update_remaining_study_days(row['remaining_study_days'])
+        todays_study_schedule.append(f"Study {row['topic']} today! {row['remaining_study_days']} day(s) remaining for this topic")
+
+        csv_data = remove_row_if_remaining_study_days_is_less_than_zero(csv_data, row['remaining_study_days'], index)
+
+    else:
+        future_study_schedule.append(f"Study {row['topic']} on {row['next_study_day']}! {row['remaining_study_days']} day(s) remaining for this topic")
+
+    index += 1
+
+with open('data.csv', 'w', newline='') as csv_file:
+    fieldnames = csv_reader.fieldnames
+    csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    csv_writer.writeheader()
+    csv_writer.writerows(csv_data)
+
+print(intro_message)
+print(todays_study_schedule)
+print(future_study_schedule_message)
+print(future_study_schedule)
+print('\n')
+
+#send_email(message)
