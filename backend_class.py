@@ -4,7 +4,6 @@ import smtplib
 
 class Backend:
 
-    message = 'time to study'
     todays_study_schedule = []
     future_study_schedule = []
     csv_data = 0
